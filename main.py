@@ -2,11 +2,12 @@ import requests
 import smtplib
 import time
 from datetime import datetime
+import os
 
-MY_LAT = 50.349700
-MY_LNG = 9.528860
-MY_EMAIL = "christian1401.mueller@gmail.com"
-MY_PW = "lxfjyessvvxxagmq"
+MY_LAT = float(os.environ["LATITUDE"])
+MY_LNG = float(os.environ["LONGITUDE"])
+MY_EMAIL = os.environ["FROM_MAIL"]
+MY_PW = os.environ["MAIL_PW"]
 
 
 def is_iss_overhead():
@@ -17,9 +18,11 @@ def is_iss_overhead():
 
     iss_longitude = float(data["iss_position"]["longitude"])
     iss_latitude = float(data["iss_position"]["latitude"])
-
+    print(iss_latitude, ";", iss_longitude)
     if abs(iss_latitude-MY_LAT) < 5 and abs(iss_longitude-MY_LNG) < 5:
         return True
+    else:
+        return False
 
 
 def is_night():
@@ -36,19 +39,24 @@ def is_night():
     sunrise = int(data["results"]["sunrise"].split("T")[1].split(":")[0])
     sunset = int(data["results"]["sunset"].split("T")[1].split(":")[0])
 
+    print(sunrise)
+    print(sunset)
+
     hour_now = datetime.now().hour
     if hour_now >= sunset or hour_now <= sunrise:
         return True
+    else:
+        return False
 
 
 while True:
-    if is_iss_overhead and is_night:
+    if is_iss_overhead() and is_night():
         with smtplib.SMTP("smtp.gmail.com") as connection:
             connection.starttls()
             connection.login(user=MY_EMAIL, password=MY_PW)
             connection.sendmail(
                 from_addr=MY_EMAIL,
-                to_addrs="christian01.mueller@freenet.de",
+                to_addrs=os.environ["TO_MAIL"],
                 msg="Subject: ISS overhead\n\nLook out, the ISS is right above you!",
             )
     time.sleep(60)
