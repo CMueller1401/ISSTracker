@@ -18,11 +18,9 @@ def is_iss_overhead():
 
     iss_longitude = float(data["iss_position"]["longitude"])
     iss_latitude = float(data["iss_position"]["latitude"])
-    print(iss_latitude, ";", iss_longitude)
+
     if abs(iss_latitude-MY_LAT) < 5 and abs(iss_longitude-MY_LNG) < 5:
         return True
-    else:
-        return False
 
 
 def is_night():
@@ -39,14 +37,9 @@ def is_night():
     sunrise = int(data["results"]["sunrise"].split("T")[1].split(":")[0])
     sunset = int(data["results"]["sunset"].split("T")[1].split(":")[0])
 
-    print(sunrise)
-    print(sunset)
-
     hour_now = datetime.now().hour
     if hour_now >= sunset or hour_now <= sunrise:
         return True
-    else:
-        return False
 
 
 while True:
