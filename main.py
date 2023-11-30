@@ -43,6 +43,7 @@ def is_night():
 
 
 while True:
+
     if is_iss_overhead() and is_night():
         with smtplib.SMTP("smtp.gmail.com") as connection:
             connection.starttls()
@@ -52,4 +53,7 @@ while True:
                 to_addrs=os.environ["TO_MAIL"],
                 msg="Subject: ISS overhead\n\nLook out, the ISS is right above you!",
             )
-    time.sleep(60)
+
+    for second in range(60, 0, -10):
+        print(second)
+        time.sleep(10)
